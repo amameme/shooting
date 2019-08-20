@@ -13,14 +13,15 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	int YellowDirection = 0, GreenDirection = 2;	//方向0(上),1(左),2(下),3(右)
 	int ShotRCFlag = 0, ShotRSFlag = 0, ShotLSFlag = 0, ShotLCFlag = 0;	//1フレームに1回のボタン処理
 	int ShotYFlag[4][N], ShotGFlag[4][N];	//弾が画面上に表示されているかの処理
-	int ShotYCounter = 20, ShotGCounter = 30;	//矢印の表示フレーム数
+	int ShotYCounter = 30, ShotGCounter = 30;	//矢印の表示フレーム数
 
 
+	/*
 	int GreenMuki;
 	int GreenDamageFlag, GreenDamageCounter, GreenDamgeGraph;
 	int ETamaX, ETamaY, ETamaFlag = 0, ETamaCounter = 0;
 	int ShotBFlag = 0;
-
+	*/
 
 
 	//画面モードの設定
@@ -69,8 +70,8 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	//移動ルーチン
 	while (1) {
 		ClearDrawScreen();
-		
-		
+
+
 		//黄色の移動ルーチン
 		YellowMove(&Yellow);
 
@@ -100,9 +101,9 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 
 		//**方向確認用コマンド
 		if (CheckHitKey(KEY_INPUT_F7) == 1) {
-	
+
 			DrawFormatString(0, 0, GetColor(255, 255, 255), "方向は%d", YellowDirection);
-			
+
 		}
 
 		//範囲外に出たときの処理
@@ -111,54 +112,27 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 
 
 		//黄色の入力によって弾を出す
-		if (CheckHitKey(KEY_INPUT_RCONTROL) == 1 ) {
+		if (CheckHitKey(KEY_INPUT_RCONTROL) == 1) {
 			if (ShotRCFlag == 0) {
-
 				ShotDirection(YellowDirection, ShotYFlag, YellowShot, Yellow, Y, YS);
-				/*
-				for (i = 0; i < N; i++) {
-					if (ShotYFlag[YellowDirection][i] == 0) {
-
-						//弾の位置
-						if (YellowDirection == 0) {
-							YellowShot[YellowDirection][i].x = Yellow.x + Y.w / 2 - YS.w / 2;
-							YellowShot[YellowDirection][i].y = Yellow.y + YS.h;
-
-							ShotYFlag[YellowDirection][i] = 1;
-						}
-						else if (YellowDirection == 1) {
-							YellowShot[YellowDirection][i].x = Yellow.x - YS.w;
-							YellowShot[YellowDirection][i].y = Yellow.y + Y.h / 2 - YS.h / 2;
-
-							ShotYFlag[YellowDirection][i] = 1;
-						}
-						else if (YellowDirection == 2) {
-							YellowShot[YellowDirection][i].x = Yellow.x + Y.w / 2 - YS.w / 2;
-							YellowShot[YellowDirection][i].y = Yellow.y + Y.h;
-
-							ShotYFlag[YellowDirection][i] = 1;
-						}
-						else {
-							YellowShot[YellowDirection][i].x = Yellow.x + Y.w;
-							YellowShot[YellowDirection][i].y = Yellow.y + Y.h / 2 - YS.h / 2;
-
-							ShotYFlag[YellowDirection][i] = 1;
-						}
-						
-
-						break;
-					}
-				}
-				*/
-				
 			}
 			//1フレームで球を打った判定
 			ShotRCFlag = 1;
 		}
 		else ShotRCFlag = 0;
 
-		//黄色を表示	
+		//緑色の入力によって弾を出す
+		if (CheckHitKey(KEY_INPUT_LCONTROL) == 1) {
+			if (ShotLCFlag == 0) {
+				ShotDirection(GreenDirection, ShotGFlag, GreenShot, Green, G, GS);
+			}
+			ShotLCFlag = 1;
+		}
+		else ShotLCFlag = 0;
+
+		//黄色と緑色を表示	
 		DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
+		DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
 		
 		//打つ方向矢印表示
 		if (ShotRSFlag == 1) {
@@ -176,6 +150,21 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 
+		if (ShotLSFlag == 1) {
+			if (ShotGCounter < 0) ShotGCounter = 30;
+			else {
+				ShotGCounter--;
+				if (GreenDirection == 0)
+					DrawGraph(Green.x + G.w / 2 - GS.w / 2, Green.y - GS.h, ArrowGraph, FALSE);
+				else if (GreenDirection == 1)
+					DrawRotaGraph(Green.x - GS.w / 2, Green.y + G.h / 2, 1.0, -M_PI / 2, ArrowGraph, FALSE, FALSE, FALSE);
+				else if (GreenDirection == 2)
+					DrawRotaGraph(Green.x + G.w / 2, Green.y + G.h + GS.h / 2, 1.0, M_PI, ArrowGraph, FALSE, FALSE, FALSE);
+				else
+					DrawRotaGraph(Green.x + G.w + GS.w / 2, Green.y + G.h / 2, 1.0, M_PI / 2, ArrowGraph, FALSE, FALSE, FALSE);
+			}
+		}
+		
 		/*
 		//緑の移動ルーチン
 		if (GreenDamageFlag == 0) {
@@ -218,25 +207,22 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		for (i = 0; i < 4; i++) {
 			for (j = 0; j < N; j++) {
 				if (ShotYFlag[i][j] == 1) {
-					switch (i) {
-					case 0:
-						YellowShot[i][j].y -= 8;
-						break;
-					case 1:
-						YellowShot[i][j].x -= 8;
-						break;
-					case 2:
-						YellowShot[i][j].y += 8;
-						break;
-					case 3:
-						YellowShot[i][j].x += 8;
-						break;
-					}
+					ShotMove(i, j, YellowShot);
 
 					//画面外に出た場合の処理
-					if (YellowShot[i][j].x < 0 || YellowShot[i][j].y < 0 || YellowShot[i][j].x > MAXw || YellowShot[i][j].y > MAXh) ShotYFlag[i][j] = 0;
+					if (RangeJudge(i, j, YellowShot) == 1) ShotYFlag[i][j] = 0;
 					DrawGraph(YellowShot[i][j].x, YellowShot[i][j].y, YellowShotGraph, FALSE);
 				}
+
+				if (ShotGFlag[i][j] == 1) {
+					ShotMove(i, j, GreenShot);
+
+					if (RangeJudge(i, j, GreenShot) == 1) ShotGFlag[i][j] = 0;
+					DrawGraph(GreenShot[i][j].x, GreenShot[i][j].y, GreenShotGraph, FALSE);
+
+				}
+
+
 			}
 		}
 
@@ -345,4 +331,30 @@ void ShotDirection(int Direction, int ShotFlag[4][N], Position Shot[4][N], Posit
 			break;
 		}
 	}
+}
+
+//弾の移動ルーチン
+void ShotMove(int i, int j, Position Shot[4][N])
+{
+	switch (i) {
+	case 0:
+		Shot[i][j].y -= 8;
+		break;
+	case 1:
+		Shot[i][j].x -= 8;
+		break;
+	case 2:
+		Shot[i][j].y += 8;
+		break;
+	case 3:
+		Shot[i][j].x += 8;
+		break;
+	}
+}
+
+//画面外判定
+int RangeJudge(int i, int j, Position Shot[4][N])
+{
+	if (Shot[i][j].x < 0 || Shot[i][j].y < 0 || Shot[i][j].x > MAXw || Shot[i][j].y > MAXh) return 1;
+	else return -1;
 }

@@ -6,6 +6,11 @@
 #define N 20 //弾の数
 #define MAXw 1280 //画面の横最大サイズ
 #define MAXh 720 //画面の縦最大サイズ
+/*
+	1920*1080(ChangWindowModeをFALSEにすればよし)
+	1280*720
+	640*480
+*/
 
 typedef struct Position {
 	int x;
@@ -21,3 +26,5 @@ void YellowMove(Position* pos);	//黄色の移動ルーチン
 void GreenMove(Position* pos);	//緑色の移動ルーチン
 void RangeSet(Position* pos, Size size);	//画面サイズ内固定
 void ShotDirection(int Direction, int ShotFlag[4][N], Position Shot[4][N], Position pos, Size size1, Size size2);	//size1(本体),size2(弾)打つ方向の制御
+void ShotMove(int i, int j, Position shot[4][N]);	//弾の移動ルーチン
+int RangeJudge(int i, int j, Position Shot[4][N]);	//画面外判定

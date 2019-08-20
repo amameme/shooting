@@ -1,0 +1,41 @@
+8/17
+関数ShotDirection追加に伴い削除した項目
+
+for (i = 0; i < N; i++) {
+	if (ShotYFlag[YellowDirection][i] == 0) {
+
+		//弾の位置
+		if (YellowDirection == 0) {
+			YellowShot[YellowDirection][i].x = Yellow.x + Y.w / 2 - YS.w / 2;
+			YellowShot[YellowDirection][i].y = Yellow.y + YS.h;
+
+			ShotYFlag[YellowDirection][i] = 1;
+		}
+		else if (YellowDirection == 1) {
+			YellowShot[YellowDirection][i].x = Yellow.x - YS.w;
+			YellowShot[YellowDirection][i].y = Yellow.y + Y.h / 2 - YS.h / 2;
+
+			ShotYFlag[YellowDirection][i] = 1;
+		}
+		else if (YellowDirection == 2) {
+			YellowShot[YellowDirection][i].x = Yellow.x + Y.w / 2 - YS.w / 2;
+			YellowShot[YellowDirection][i].y = Yellow.y + Y.h;
+
+			ShotYFlag[YellowDirection][i] = 1;
+		}
+		else {
+			YellowShot[YellowDirection][i].x = Yellow.x + Y.w;
+			YellowShot[YellowDirection][i].y = Yellow.y + Y.h / 2 - YS.h / 2;
+
+			ShotYFlag[YellowDirection][i] = 1;
+		}
+						
+
+		break;
+	}
+}
+
+
+Error
+8/17
+DrawGraphがあいまいです→そのまま使っても大丈夫、またはVisual Studio Communityを再起動
