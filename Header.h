@@ -12,6 +12,11 @@
 	640*480
 */
 
+//キャラのスピード初期制御
+enum {
+	speed = 6
+};
+
 typedef struct Position {
 	int x;
 	int y;
@@ -28,3 +33,4 @@ void RangeSet(Position* pos, Size size);	//画面サイズ内固定
 void ShotDirection(int Direction, int ShotFlag[4][N], Position Shot[4][N], Position pos, Size size1, Size size2);	//size1(本体),size2(弾)打つ方向の制御
 void ShotMove(int i, int j, Position shot[4][N]);	//弾の移動ルーチン
 int RangeJudge(int i, int j, Position Shot[4][N]);	//画面外判定
+int HitBox(Position pos1, Size size1, Position pos2, Size size2); //2つの物体の当たり判定

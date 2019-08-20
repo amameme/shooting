@@ -6,6 +6,7 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 
 
 	Position Yellow, Green, YellowShot[4][N], GreenShot[4][N]; //緑と黄色と弾の座標
+	Position TmpY, TmpG;
 	Size Y, G, YS, GS; //それぞれの画像サイズ
 	int i, j;
 	int YellowGraph, YellowShotGraph, GreenGraph, GreenShotGraph, ArrowGraph;	//ハンドル変数
@@ -14,6 +15,8 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	int ShotRCFlag = 0, ShotRSFlag = 0, ShotLSFlag = 0, ShotLCFlag = 0;	//1フレームに1回のボタン処理
 	int ShotYFlag[4][N], ShotGFlag[4][N];	//弾が画面上に表示されているかの処理
 	int ShotYCounter = 30, ShotGCounter = 30;	//矢印の表示フレーム数
+	int YellowDamageFlag, GreenDamageFlag;
+	int CharCounter = 0;	//画像重複判定
 
 
 	/*
@@ -71,12 +74,18 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	while (1) {
 		ClearDrawScreen();
 
+		TmpY = Yellow;
+		TmpG = Green;
 
 		//黄色の移動ルーチン
 		YellowMove(&Yellow);
-
 		//緑色の移動ルーチン
 		GreenMove(&Green);
+
+		if (HitBox(Yellow, Y, Green, G) == 1) {
+			Yellow = TmpY;
+			Green = TmpG;
+		}
 
 		//黄色の球の方向制御
 		if (CheckHitKey(KEY_INPUT_RSHIFT) == 1) {
@@ -150,6 +159,8 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 
+
+
 		if (ShotLSFlag == 1) {
 			if (ShotGCounter < 0) ShotGCounter = 30;
 			else {
@@ -165,6 +176,8 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 		
+
+
 		/*
 		//緑の移動ルーチン
 		if (GreenDamageFlag == 0) {
@@ -226,6 +239,10 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 
+		//当たり判定
+		if (HitBox(Green, G, Yellow, Y) == 1) {
+
+		}
 
 		/*
 		if (ETamaFlag == 1) {
@@ -269,19 +286,19 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 //黄色の移動ルーチン
 void YellowMove(Position* pos)
 {
-	if (CheckHitKey(KEY_INPUT_UP) == 1) pos->y -= 3;
-	if (CheckHitKey(KEY_INPUT_DOWN) == 1) pos->y += 3;
-	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) pos->x += 3;
-	if (CheckHitKey(KEY_INPUT_LEFT) == 1) pos->x -= 3;
+	if (CheckHitKey(KEY_INPUT_UP) == 1) pos->y -= speed;
+	if (CheckHitKey(KEY_INPUT_DOWN) == 1) pos->y += speed;
+	if (CheckHitKey(KEY_INPUT_RIGHT) == 1) pos->x += speed;
+	if (CheckHitKey(KEY_INPUT_LEFT) == 1) pos->x -= speed;
 }
 
 //緑色の移動ルーチン
 void GreenMove(Position* pos)
 {
-	if (CheckHitKey(KEY_INPUT_W) == 1) pos->y -= 3;
-	if (CheckHitKey(KEY_INPUT_S) == 1) pos->y += 3;
-	if (CheckHitKey(KEY_INPUT_A) == 1) pos->x -= 3;
-	if (CheckHitKey(KEY_INPUT_D) == 1) pos->x += 3;
+	if (CheckHitKey(KEY_INPUT_W) == 1) pos->y -= speed;
+	if (CheckHitKey(KEY_INPUT_S) == 1) pos->y += speed;
+	if (CheckHitKey(KEY_INPUT_A) == 1) pos->x -= speed;
+	if (CheckHitKey(KEY_INPUT_D) == 1) pos->x += speed;
 }
 
 //画面外判定
@@ -358,3 +375,15 @@ int RangeJudge(int i, int j, Position Shot[4][N])
 	if (Shot[i][j].x < 0 || Shot[i][j].y < 0 || Shot[i][j].x > MAXw || Shot[i][j].y > MAXh) return 1;
 	else return -1;
 }
+
+//当たり判定
+int HitBox(Position pos1, Size size1, Position pos2, Size size2)
+{
+	//green pos2
+	//Shot po1
+	if (((pos1.x > pos2.x && pos1.x < pos2.x + size2.w) || (pos2.x > pos1.x && pos2.x < pos1.x + size1.w)) &&
+		((pos1.y > pos2.y && pos1.y < pos2.y + size2.h) || (pos2.y > pos1.y && pos2.y < pos1.y + size1.h)))
+		return 1;
+	else return 0;
+}
+
