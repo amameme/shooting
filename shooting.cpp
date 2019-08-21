@@ -9,22 +9,16 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	Position TmpY, TmpG;
 	Size Y, G, YS, GS; //それぞれの画像サイズ
 	int i, j;
-	int YellowGraph, YellowShotGraph, GreenGraph, GreenShotGraph, ArrowGraph;	//ハンドル変数
+	int YellowGraph, YellowShotGraph, GreenGraph, GreenShotGraph, ArrowGraph, BlackGraph;	//ハンドル変数
 	int YellowDamageGraph, GreenDamageGraph;	//ダメージハンドル変数
-	int YellowDamageFlag, GreenDamageFlag;
+	int YellowDamageFlag = 0, GreenDamageFlag = 0;
+	int YellowDamageCounter = 0, GreenDamageCounter = 0;
 	int YellowDirection = 0, GreenDirection = 2;	//方向0(上),1(左),2(下),3(右)
 	int ShotRCFlag = 0, ShotRSFlag = 0, ShotLSFlag = 0, ShotLCFlag = 0;	//1フレームに1回のボタン処理
 	int ShotYFlag[4][N], ShotGFlag[4][N];	//弾が画面上に表示されているかの処理
 	int ShotYCounter = 30, ShotGCounter = 30;	//矢印の表示フレーム数
 	int CharCounter = 0;	//画像重複判定
 
-
-	/*
-	int GreenMuki;
-	int GreenDamageFlag, GreenDamageCounter, GreenDamgeGraph;
-	int ETamaX, ETamaY, ETamaFlag = 0, ETamaCounter = 0;
-	int ShotBFlag = 0;
-	*/
 
 
 	//画面モードの設定
@@ -44,6 +38,7 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	GreenShotGraph = LoadGraph("image/EShot.png");	//緑色の弾のハンドル
 	GreenDamageGraph = LoadGraph("image/SikakuDam.png");	//緑色のダメージハンドル
 	ArrowGraph = LoadGraph("image/Arrow.png");	//矢印のハンドル
+	BlackGraph = LoadGraph("image/Black.png");	//黒画像のハンドル
 
 	//サイズ取得
 	GetGraphSize(YellowGraph, &Y.w, &Y.h);
@@ -52,14 +47,14 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	GetGraphSize(GreenShotGraph, &GS.w, &GS.h);
 
 	//黄色の座標軸をセット
-	Yellow.x = MAXw - Y.w;
-	Yellow.y = MAXh - Y.h;
+	Yellow.x = (double)MAXw - Y.w;
+	Yellow.y = (double)MAXh - Y.h;
 
 	//緑の座標軸をセット
 	Green.x = 0;
+
 	Green.y = 0;
-
-
+	
 	//黄色弾と緑弾のショットフラグの初期化
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < N; j++) {
@@ -68,8 +63,6 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		}
 	}
 	
-
-
 	//移動ルーチン
 	while (1) {
 		ClearDrawScreen();
@@ -139,9 +132,38 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		}
 		else ShotLCFlag = 0;
 
-		//黄色と緑色を表示	
-		DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
-		DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
+		//黄色を表示
+		if (YellowDamageFlag == 0) {
+			DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
+		}
+		else {
+			if (YellowDamageCounter != 5) {
+				if (YellowDamageCounter % 2 == 0) {
+					DrawGraph(Yellow.x, Yellow.y, BlackGraph, FALSE);
+					YellowDamageCounter++;
+				}
+				else {
+					DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
+					YellowDamageCounter++;
+				}
+			}
+			else YellowDamageCounter = 0;
+		}
+
+		//緑表示
+		if (GreenDamageFlag == 0) {
+			DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
+		}
+		else {
+			if (GreenDamageFlag == 1) {
+				DrawGraph(Green.x, Green.y, GreenDamageGraph, FALSE);
+				GreenDamageFlag++;
+			}
+			else {
+				DrawGraph(Green.x, Green.y, BlackGraph, FALSE);
+				GreenDamageFlag = 0;
+			}
+		}
 		
 		//黄色の打つ方向矢印表示
 		if (ShotRSFlag == 1) {
@@ -203,29 +225,15 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			for (j = 0; j < N; j++) {
 				if (HitBox(Green, G, YellowShot[i][j], YS) == 1) {
 					ShotYFlag[i][j] = 0;
+					GreenDamageFlag++;
 				}
 				if (HitBox(Yellow, Y, GreenShot[i][j], GS) == 1) {
 					ShotGFlag[i][j] = 0;
+					YellowDamageFlag++;
+					YellowDamageCounter = 0;
 				}
 			}
 		}
-
-
-		
-		/*
-		//弾が緑に当たった判定
-		for (i = 0; i < N; i++) {
-			if (GreenDamageCounter != 5) {
-				if (((ShotX[i] > Green.x && ShotX[i] < Green.x + Siw) || (Green.x > ShotX[i] && Green.x < ShotX[i] + Sw)) &&
-					((ShotY[i] > Green.y && ShotY[i] < Green.y + Sih) || (Green.y > ShotY[i] && Green.y < ShotY[i] + Sh))) {
-					ShotFlag[i] = 0;
-					GreenDamageFlag = 1;
-				}
-			}
-		
-		}
-		*/
-		
 
 		ScreenFlip();
 
@@ -263,9 +271,9 @@ void GreenMove(Position* pos)
 void RangeSet(Position* pos, Size size)
 {
 	if (pos->y < 0) pos->y = 0;
-	if (pos->y > MAXh - size.h) pos->y = MAXh - size.h;
+	if (pos->y > (double)MAXh - size.h) pos->y = (double)MAXh - size.h;
 	if (pos->x < 0) pos->x = 0;
-	if (pos->x > MAXw - size.w) pos->x = MAXw - size.w;
+	if (pos->x > (double)MAXw - size.w) pos->x = (double)MAXw - size.w;
 }
 
 //弾を打つ方向の制御
