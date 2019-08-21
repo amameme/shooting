@@ -91,3 +91,19 @@ DrawGraph‚ª‚ ‚¢‚Ü‚¢‚Å‚·¨‚»‚Ì‚Ü‚Üg‚Á‚Ä‚à‘åä•vA‚Ü‚½‚ÍVisual Studio Community‚ğ
 			DrawGraph(ETamaX, ETamaY, ETamaGraph, FALSE);
 		}
 
+8/21
+ã‚É“¯‚¶‚­íœ€–Ú —Î‚ª’e‚É“–‚½‚Á‚½”»’è
+
+		/*
+		//’e‚ª—Î‚É“–‚½‚Á‚½”»’è
+		for (i = 0; i < N; i++) {
+			if (GreenDamageCounter != 5) {
+				if (((ShotX[i] > Green.x && ShotX[i] < Green.x + Siw) || (Green.x > ShotX[i] && Green.x < ShotX[i] + Sw)) &&
+					((ShotY[i] > Green.y && ShotY[i] < Green.y + Sih) || (Green.y > ShotY[i] && Green.y < ShotY[i] + Sh))) {
+					ShotFlag[i] = 0;
+					GreenDamageFlag = 1;
+				}
+			}
+		
+		}
+		*/

@@ -60,6 +60,10 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		for (j = 0; j < N; j++) {
 			ShotYFlag[i][j] = 0;
 			ShotGFlag[i][j] = 0;
+			YellowShot[i][j].x = -50;
+			YellowShot[i][j].y = -50;
+			GreenShot[i][j].x = -50;
+			GreenShot[i][j].y = -50;
 		}
 	}
 	
@@ -133,38 +137,41 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		else ShotLCFlag = 0;
 
 		//黄色を表示
-		if (YellowDamageFlag == 0) {
-			DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
-		}
-		else {
-			if (YellowDamageCounter != 5) {
-				if (YellowDamageCounter % 2 == 0) {
-					DrawGraph(Yellow.x, Yellow.y, BlackGraph, FALSE);
-					YellowDamageCounter++;
-				}
-				else {
-					DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
-					YellowDamageCounter++;
-				}
+		if (YellowDamageFlag != 0) {
+			if (YellowDamageCounter % 2 == 0) {
+				DrawGraph(Yellow.x, Yellow.y, YellowDamageGraph, FALSE);
+				YellowDamageCounter++;
 			}
-			else YellowDamageCounter = 0;
+			else {
+				DrawGraph(Yellow.x, Yellow.y, BlackGraph, FALSE);
+				YellowDamageCounter++;
+			}
+			if (YellowDamageCounter == 10) {
+				YellowDamageFlag = 0;
+				YellowDamageCounter = 0;
+			}
+
 		}
+		else DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
 
 		//緑表示
-		if (GreenDamageFlag == 0) {
-			DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
-		}
-		else {
-			if (GreenDamageFlag == 1) {
+		if (GreenDamageFlag != 0) {
+			GreenDamageCounter++;
+
+			if (GreenDamageCounter % 2 == 0) {
 				DrawGraph(Green.x, Green.y, GreenDamageGraph, FALSE);
-				GreenDamageFlag++;
 			}
 			else {
 				DrawGraph(Green.x, Green.y, BlackGraph, FALSE);
-				GreenDamageFlag = 0;
 			}
+			if (GreenDamageCounter == 10) {
+				GreenDamageFlag = 0;
+				GreenDamageCounter = 0;
+			}
+
 		}
-		
+		else DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
+
 		//黄色の打つ方向矢印表示
 		if (ShotRSFlag == 1) {
 			if (ShotYCounter < 0) ShotYCounter = 30;
@@ -224,13 +231,16 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		for (i = 0; i < 4; i++) {
 			for (j = 0; j < N; j++) {
 				if (HitBox(Green, G, YellowShot[i][j], YS) == 1) {
+					YellowShot[i][j].x = -50;
+					YellowShot[i][j].y = -50;
 					ShotYFlag[i][j] = 0;
 					GreenDamageFlag++;
 				}
 				if (HitBox(Yellow, Y, GreenShot[i][j], GS) == 1) {
+					GreenShot[i][j].x = -50;
+					GreenShot[i][j].y = -50;
 					ShotGFlag[i][j] = 0;
 					YellowDamageFlag++;
-					YellowDamageCounter = 0;
 				}
 			}
 		}
