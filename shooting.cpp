@@ -11,11 +11,11 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 	int i, j;
 	int YellowGraph, YellowShotGraph, GreenGraph, GreenShotGraph, ArrowGraph;	//ハンドル変数
 	int YellowDamageGraph, GreenDamageGraph;	//ダメージハンドル変数
+	int YellowDamageFlag, GreenDamageFlag;
 	int YellowDirection = 0, GreenDirection = 2;	//方向0(上),1(左),2(下),3(右)
 	int ShotRCFlag = 0, ShotRSFlag = 0, ShotLSFlag = 0, ShotLCFlag = 0;	//1フレームに1回のボタン処理
 	int ShotYFlag[4][N], ShotGFlag[4][N];	//弾が画面上に表示されているかの処理
 	int ShotYCounter = 30, ShotGCounter = 30;	//矢印の表示フレーム数
-	int YellowDamageFlag, GreenDamageFlag;
 	int CharCounter = 0;	//画像重複判定
 
 
@@ -143,7 +143,7 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		DrawGraph(Yellow.x, Yellow.y, YellowGraph, FALSE);
 		DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
 		
-		//打つ方向矢印表示
+		//黄色の打つ方向矢印表示
 		if (ShotRSFlag == 1) {
 			if (ShotYCounter < 0) ShotYCounter = 30;
 			else {
@@ -159,8 +159,7 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 
-
-
+		//緑の打つ方向矢印表示
 		if (ShotLSFlag == 1) {
 			if (ShotGCounter < 0) ShotGCounter = 30;
 			else {
@@ -176,45 +175,6 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 		
-
-
-		/*
-		//緑の移動ルーチン
-		if (GreenDamageFlag == 0) {
-			if (GreenMuki == 1) Green.x += 20;
-			if (GreenMuki == 0) Green.x -= 20;
-
-			//壁に当たった場合反転
-			if (Green.x > 640 - 64) {
-				Green.x = 640 - 64;
-				GreenMuki = 0;
-			}
-			else if (Green.x < 0) {
-				Green.x = 0;
-				GreenMuki = 1;
-			}
-
-			ETamaCounter++;
-
-			if (ETamaCounter == 30) {
-				ETamaCounter = 0;
-				ETamaX = Green.x + Siw / 2 - Sw / 2;
-				ETamaY = Green.y + Sih;
-				ETamaFlag = 1;
-			}
-
-			//緑を表示
-			DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
-		}
-		else {
-			GreenDamageCounter++;
-			DrawGraph(Green.x, Green.y, GreenDamgeGraph, FALSE);
-			if (GreenDamageCounter == 5) {
-				GreenDamageFlag = 0;
-				GreenDamageCounter = 0;
-			}
-		}
-		*/
 
 		//弾が画面上にある場合の処理
 		for (i = 0; i < 4; i++) {
@@ -239,23 +199,20 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 			}
 		}
 
-		//当たり判定
-		if (HitBox(Green, G, Yellow, Y) == 1) {
-
-		}
-
-		/*
-		if (ETamaFlag == 1) {
-			ETamaY += 16;
-
-			if (ETamaY > 480) {
-				ETamaFlag = 0;
+		for (i = 0; i < 4; i++) {
+			for (j = 0; j < N; j++) {
+				if (HitBox(Green, G, YellowShot[i][j], YS) == 1) {
+					ShotYFlag[i][j] = 0;
+				}
+				if (HitBox(Yellow, Y, GreenShot[i][j], GS) == 1) {
+					ShotGFlag[i][j] = 0;
+				}
 			}
-
-			DrawGraph(ETamaX, ETamaY, ETamaGraph, FALSE);
 		}
+
 
 		
+		/*
 		//弾が緑に当たった判定
 		for (i = 0; i < N; i++) {
 			if (GreenDamageCounter != 5) {
@@ -268,6 +225,7 @@ int WINAPI WinMain(HINSTANCE hlnstance, HINSTANCE hPrevlnstance, LPSTR lpCmdLine
 		
 		}
 		*/
+		
 
 		ScreenFlip();
 

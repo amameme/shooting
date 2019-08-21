@@ -39,3 +39,55 @@ for (i = 0; i < N; i++) {
 Error
 8/17
 DrawGraphがあいまいです→そのまま使っても大丈夫、またはVisual Studio Communityを再起動
+
+8/21
+初期の自動で動く緑のプログラムのコメント部分を削除
+
+		//緑の移動ルーチン
+		if (GreenDamageFlag == 0) {
+			if (GreenMuki == 1) Green.x += 20;
+			if (GreenMuki == 0) Green.x -= 20;
+
+			//壁に当たった場合反転
+			if (Green.x > 640 - 64) {
+				Green.x = 640 - 64;
+				GreenMuki = 0;
+			}
+			else if (Green.x < 0) {
+				Green.x = 0;
+				GreenMuki = 1;
+			}
+
+			ETamaCounter++;
+
+			if (ETamaCounter == 30) {
+				ETamaCounter = 0;
+				ETamaX = Green.x + Siw / 2 - Sw / 2;
+				ETamaY = Green.y + Sih;
+				ETamaFlag = 1;
+			}
+
+			//緑を表示
+			DrawGraph(Green.x, Green.y, GreenGraph, FALSE);
+		}
+		else {
+			GreenDamageCounter++;
+			DrawGraph(Green.x, Green.y, GreenDamgeGraph, FALSE);
+			if (GreenDamageCounter == 5) {
+				GreenDamageFlag = 0;
+				GreenDamageCounter = 0;
+			}
+		}
+
+8/21
+上に同じく削除項目　弾の移動ルーチン
+		if (ETamaFlag == 1) {
+			ETamaY += 16;
+
+			if (ETamaY > 480) {
+				ETamaFlag = 0;
+			}
+
+			DrawGraph(ETamaX, ETamaY, ETamaGraph, FALSE);
+		}
+

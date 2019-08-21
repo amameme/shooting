@@ -11,15 +11,11 @@
 	1280*720
 	640*480
 */
-
-//キャラのスピード初期制御
-enum {
-	speed = 6
-};
+#define speed 5.5	//キャラのスピード初期設定
 
 typedef struct Position {
-	int x;
-	int y;
+	double x;
+	double y;
 } Position;
 
 typedef struct Size {
